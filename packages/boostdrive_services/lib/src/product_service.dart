@@ -1,0 +1,175 @@
+import 'dart:typed_data';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:boostdrive_core/boostdrive_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// This is the "Global Key" to your Product Service
+final productServiceProvider = Provider<ProductService>((ref) {
+  return ProductService();
+});
+
+class ProductService {
+  final _supabase = Supabase.instance.client;
+
+  Future<List<Product>> getFeaturedProducts() async {
+    try {
+      final response = await _supabase
+          .from('products')
+          .select()
+          .eq('status', 'available')
+          .eq('is_featured', true)
+          .order('created_at', ascending: false)
+          .limit(10);
+
+      return (response as List).map((e) => Product.fromMap(e)).toList();
+    } catch (e) {
+      print('Error fetching featured products: $e');
+      return [];
+    }
+  }
+
+  Future<List<Product>> getNewArrivals() async {
+    try {
+      final yesterday = DateTime.now().subtract(const Duration(hours: 24));
+      final response = await _supabase
+          .from('products')
+          .select()
+          .eq('status', 'available')
+          .gte('created_at', yesterday.toIso8601String())
+          .order('created_at', ascending: false);
+
+      return (response as List).map((e) => Product.fromMap(e)).toList();
+    } catch (e) {
+      print('Error fetching new arrivals: $e');
+      return [];
+    }
+  }
+
+  Future<List<Product>> getProductsByCategory(String category) async {
+    return searchProducts(category: category);
+  }
+
+  Future<List<Product>> searchProducts({
+    String? category,
+    String? query,
+    String? make,
+    String? model,
+    int? year,
+    String? condition,
+  }) async {
+    try {
+      var supabaseQuery = _supabase
+          .from('products')
+          .select();
+
+      if (category != null && category != 'all') {
+        supabaseQuery = supabaseQuery.eq('category', category);
+      }
+
+      if (query != null && query.isNotEmpty) {
+        supabaseQuery = supabaseQuery.ilike('title', '%$query%');
+      }
+      
+      if (make != null) supabaseQuery = supabaseQuery.eq('fitment->>make', make);
+      if (model != null) supabaseQuery = supabaseQuery.eq('fitment->>model', model);
+      if (year != null) supabaseQuery = supabaseQuery.eq('fitment->>year', year);
+      if (condition != null) supabaseQuery = supabaseQuery.eq('condition', condition);
+
+      final response = await supabaseQuery.order('created_at', ascending: false);
+      return (response as List).map((data) => Product.fromMap(data)).toList();
+    } catch (e) {
+      print('Error searching products: $e');
+      return [];
+    }
+  }
+
+  Future<List<Product>> searchParts({
+    String? make,
+    String? model,
+    int? year,
+    String? condition,
+    String? query,
+  }) async {
+    try {
+      var supabaseQuery = _supabase.from('products').select().eq('category', 'part');
+
+      if (make != null) supabaseQuery = supabaseQuery.eq('fitment->>make', make);
+      if (model != null) supabaseQuery = supabaseQuery.eq('fitment->>model', model);
+      if (year != null) supabaseQuery = supabaseQuery.eq('fitment->>year', year);
+      if (condition != null) supabaseQuery = supabaseQuery.eq('condition', condition);
+      if (query != null && query.isNotEmpty) {
+        supabaseQuery = supabaseQuery.ilike('title', '%$query%');
+      }
+
+      final response = await supabaseQuery.order('created_at', ascending: false);
+      return (response as List).map((data) => Product.fromMap(data)).toList();
+    } catch (e) {
+      print('Error searching parts: $e');
+      return [];
+    }
+  }
+
+  Future<String?> addProduct(Product product) async {
+    try {
+      final response = await _supabase.from('products').insert(product.toMap()).select('id').single();
+      return response['id'].toString();
+    } catch (e) {
+      print('Error adding product: $e');
+      rethrow; 
+    }
+  }
+
+  Future<void> updateProduct(Product product) async {
+    try {
+      await _supabase
+          .from('products')
+          .update(product.toMap())
+          .eq('id', product.id);
+    } catch (e) {
+      print('Error updating product: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _supabase
+          .from('products')
+          .delete()
+          .eq('id', productId);
+    } catch (e) {
+      print('Error deleting product: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> uploadProductImage(List<int> bytes, String fileName) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('User must be logged in to upload images');
+
+      final path = '$userId/${DateTime.now().millisecondsSinceEpoch}_$fileName';
+      
+      await _supabase.storage.from('product-images').uploadBinary(
+            path,
+            Uint8List.fromList(bytes),
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+
+      final String publicUrl = _supabase.storage.from('product-images').getPublicUrl(path);
+      return publicUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      rethrow;
+    }
+  }
+}
+
+final sellerProductsProvider = StreamProvider.family<List<Product>, String>((ref, sellerId) {
+  final supabase = Supabase.instance.client;
+  return supabase
+      .from('products')
+      .stream(primaryKey: ['id'])
+      .eq('seller_id', sellerId)
+      .map((data) => data.map((e) => Product.fromMap(e)).toList());
+});

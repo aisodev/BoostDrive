@@ -1,0 +1,56 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:boostdrive_core/boostdrive_core.dart';
+
+class DeliveryService {
+  final _supabase = Supabase.instance.client;
+
+  Stream<List<DeliveryOrder>> getActiveDeliveries(String userId) {
+    return _supabase
+        .from('delivery_orders')
+        .stream(primaryKey: ['id'])
+        .map((data) => data
+            .where((item) =>
+                item['customer_id'] == userId ||
+                item['seller_id'] == userId ||
+                item['driver_id'] == userId)
+            .map((json) => DeliveryOrder.fromMap(json))
+            .toList());
+  }
+
+  Stream<List<DeliveryOrder>> getPendingQueue() {
+    return _supabase
+        .from('delivery_orders')
+        .stream(primaryKey: ['id'])
+        .eq('status', 'pending')
+        .map((data) => data.map((json) => DeliveryOrder.fromMap(json)).toList());
+  }
+
+  Future<void> updateDeliveryStatus(String orderId, String status, {String? eta, String? driverId}) async {
+    final updates = {
+      'status': status,
+    };
+    if (eta != null) updates['eta'] = eta;
+    if (driverId != null) updates['driver_id'] = driverId;
+
+    await _supabase.from('delivery_orders').update(updates).eq('id', orderId);
+  }
+
+  Stream<double> getGlobalVolume() {
+    return _supabase
+        .from('delivery_orders')
+        .stream(primaryKey: ['id'])
+        .map((data) => data.fold(0.0, (sum, item) {
+          final items = Map<String, dynamic>.from(item['items'] ?? {});
+          return sum + (items['price'] ?? 0.0);
+        }));
+  }
+}
+
+final deliveryServiceProvider = Provider<DeliveryService>((ref) {
+  return DeliveryService();
+});
+
+final activeDeliveriesProvider = StreamProvider.family<List<DeliveryOrder>, String>((ref, userId) {
+  return ref.watch(deliveryServiceProvider).getActiveDeliveries(userId);
+});

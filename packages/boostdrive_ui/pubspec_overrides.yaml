@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: boostdrive_core,boostdrive_auth
+dependency_overrides:
+  boostdrive_auth:
+    path: ..\\boostdrive_auth
+  boostdrive_core:
+    path: ..\\boostdrive_core

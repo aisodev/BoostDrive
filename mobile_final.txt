@@ -1,0 +1,12 @@
+﻿Analyzing product_detail_page.dart...                           
+
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:86:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:170:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:200:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:235:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:247:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:261:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\mobile\lib\product_detail_page.dart:274:43 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - apps\mobile\lib\product_detail_page.dart:328:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - apps\mobile\lib\product_detail_page.dart:340:41 - use_build_context_synchronously
+

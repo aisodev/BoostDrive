@@ -1,0 +1,11 @@
+﻿Analyzing product_detail_page.dart...                           
+
+   info - Don't invoke 'print' in production code - apps\web\lib\product_detail_page.dart:76:9 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\product_detail_page.dart:200:61 - deprecated_member_use
+  error - The named parameter 'height' isn't defined - apps\web\lib\product_detail_page.dart:202:31 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\product_detail_page.dart:217:59 - deprecated_member_use
+  error - The named parameter 'height' isn't defined - apps\web\lib\product_detail_page.dart:219:31 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\product_detail_page.dart:222:74 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\product_detail_page.dart:317:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\product_detail_page.dart:483:37 - deprecated_member_use
+

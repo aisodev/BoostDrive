@@ -1,0 +1,14 @@
+name: boostdrive_ecosystem
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  postbootstrap: dart pub global activate fvm
+  test:
+    exec: flutter test
+    select-package-dir-exists:
+      - test
+  analyze:
+    exec: flutter analyze .

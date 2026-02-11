@@ -1,0 +1,8 @@
+﻿Analyzing edit_listing_page.dart...                             
+
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\edit_listing_page.dart:127:39 - deprecated_member_use
+  error - Undefined name 'updatedProduct' - apps\web\lib\edit_listing_page.dart:147:42 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - apps\web\lib\edit_listing_page.dart:178:50 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - apps\web\lib\edit_listing_page.dart:203:31 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - apps\web\lib\edit_listing_page.dart:218:31 - deprecated_member_use
+
