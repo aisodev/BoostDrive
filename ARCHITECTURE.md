@@ -21,7 +21,7 @@ graph TD
     subgraph E [Shared Packages]
         P1[boostdrive_ui] --> P2[boostdrive_core]
         P3[boostdrive_services] --> P2
-        P3 --> P4[boostdrive_firebase]
+        P3 --> P4[boostdrive_auth]
         P4 --> P2
     end
 ```
@@ -35,13 +35,13 @@ graph TD
   - *Platforms*: Optimized for Desktop Browser.
 
 ### 2. Infrastructure Layer (`packages/`)
-- **`boostdrive_firebase`**: 
-  - Centralizes the `Firebase.initializeApp` logic.
-  - Implements **Conditional Exports** for Web Authentication stubs (handling `RecaptchaVerifier` which only exists in the JS SDK).
+- **`boostdrive_auth`**: 
+  - Centralizes Supabase authentication logic.
+  - Implements cross-platform auth methods (email, phone, username, OAuth providers like Google and Apple).
 - **`boostdrive_services`**:
   - Contains Data Access Objects (DAOs) and Service Providers.
-  - *SOSService*: Real-time stream of emergency requests.
-  - *ProductService*: CRUD operations for vehicle/part listings.
+  - *SOSService*: Real-time stream of emergency requests via Supabase subscriptions.
+  - *ProductService*: CRUD operations for vehicle/part listings using Supabase PostgreSQL.
 
 ### 3. Presentation Layer (`packages/boostdrive_ui`)
 - Uses a unified **Theme Engine** based on premium dark-mode aesthetics.
@@ -55,11 +55,13 @@ graph TD
 
 ## 🔐 Authentication Flow (Cross-Platform)
 
-BoostDrive uses **Firebase Phone Auth** with a custom abstraction to handle platform differences:
+BoostDrive uses **Supabase Auth** with support for multiple authentication methods:
 
-1. **Web**: Uses `RecaptchaVerifier` injected into a dedicated `HtmlElementView`. The logic is stubbed out for native platforms to prevent compilation errors.
-2. **Native**: Uses `verifyPhoneNumber` with automatic SMS retrieval.
-3. **Abstraction**: The `AuthService` in `boostdrive_firebase` exposes a single `signInWithPhone` method that transparently chooses the correct implementation.
+1. **Email/Password**: Traditional email-based authentication with email verification.
+2. **Phone/OTP**: SMS-based authentication with one-time password verification.
+3. **Username**: Users can log in with their username instead of email.
+4. **OAuth Providers**: Google and Apple sign-in for seamless social authentication.
+5. **Password Reset**: OTP-based password reset flow for enhanced security.
 
 ---
 
@@ -95,6 +97,6 @@ Assets are primarily hosted in `packages/boostdrive_ui`. However, to ensure maxi
 
 ## 🚀 Deployment Strategy
 
-1. **Web**: Deployed via **Firebase Hosting** using `flutter build web --web-renderer canvaskit`.
+1. **Web**: Deployed via hosting platforms (Vercel, Netlify, or custom) using `flutter build web --web-renderer canvaskit`.
 2. **Android**: Distributed via **Play Store** (AAB) or direct APK for logistics testing.
 3. **CI/CD**: Melos-aware pipelines run `melos analyze` and `melos test` on every push.

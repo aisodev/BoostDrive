@@ -16,10 +16,10 @@ The ecosystem consists of two flagship applications and a suite of shared infras
 | Technology | Usage | Rationale |
 | :--- | :--- | :--- |
 | **Flutter** | Frontend (Cross-platform) | Single codebase for iOS, Android, Web, and Windows, ensuring rapid feature parity and premium UI performance. |
-| **Firebase** | Backend-as-a-Service | Real-time capabilities for SOS tracking, industry-standard authentication, and serverless scalability. |
+| **Supabase** | Backend-as-a-Service | Real-time capabilities for SOS tracking, industry-standard authentication (email, phone, OAuth), and PostgreSQL-powered scalability. |
 | **Riverpod** | State Management | Ensures a predictable, testable, and loosely coupled logic layer across all applications. |
 | **Melos** | Monorepo Management | Orchestrates multiple packages and apps, standardizing scripts and dependency management. |
-| **Firestore** | Database | A NoSQL real-time document store perfect for dynamic marketplace listings and emergency logging. |
+| **PostgreSQL** | Database | A powerful relational database via Supabase, perfect for structured data, real-time subscriptions, and complex queries. |
 
 ---
 
@@ -32,24 +32,24 @@ BoostDrive uses a **Layered Monorepo Architecture** to maximize code reuse and m
 - **`apps/Mobile`**: The primary flutter app for mobile users. Includes SOS persistence, live location tracking, and emergency dialers.
 - **`apps/Web`**: The marketplace platform with a premium responsive layout, advanced filtering, and booking systems.
 - **`packages/boostdrive_ui`**: The "Source of Truth" for the design system. Contains shared widgets, HSL-based color tokens, and global layout wrappers.
-- **`packages/boostdrive_services`**: Encapsulates business logic, Firestore integrations, and provider-based services (Product, SOS, Cart, Booking).
+- **`packages/boostdrive_services`**: Encapsulates business logic, Supabase integrations, and provider-based services (Product, SOS, Cart, Booking).
 - **`packages/boostdrive_core`**: Contains platform-neutral models (Product, UserProfile) and shared constants.
-- **`packages/boostdrive_firebase`**: Centralizes Firebase configuration and handles cross-platform Authentication complexities (including Web reCAPTCHA stubs).
+- **`packages/boostdrive_auth`**: Centralizes Supabase authentication and handles cross-platform auth complexities (email, phone, OAuth).
 
 ---
 
 ## 🚀 Key Features
 
 ### Mobile Services Platform
-- **One-Tap SOS**: Instantly broadcasts emergency requests to Firestore with precise GPS coordinates.
+- **One-Tap SOS**: Instantly broadcasts emergency requests to Supabase with precise GPS coordinates.
 - **Location Persistence**: Uses background-friendly tracking to ensure help can always find you.
 - **Emergency Dialers**: Direct links to Police and Ambulance services with platform-native fallbacks.
 - **Global Backgrounding**: A consistent, immersive dark-themed experience across all pages.
 
 ### Web Marketplace Platform
 - **Premium Shop Experience**: Sophisticated grid-based browsing for auto parts and car rentals.
-- **Cross-Platform Auth**: Unified login using Firebase Phone Auth, optimized for both Web (reCAPTCHA v3/v2) and Mobile.
-- **Dynamic Listings**: Real-time listing updates with integrated Firestore persistence.
+- **Cross-Platform Auth**: Unified login using Supabase Auth (email, phone, username, OAuth), optimized for both Web and Mobile.
+- **Dynamic Listings**: Real-time listing updates with integrated Supabase real-time subscriptions.
 - **Responsive Layouts**: Optimized for desktop viewing while maintaining mobile-ready accessibility.
 
 ---
@@ -75,7 +75,7 @@ BoostDrive uses a **Layered Monorepo Architecture** to maximize code reuse and m
    ```
 
 3. **Verify Configuration**:
-   Ensure `apps/Mobile/lib/firebase_options.dart` is present and configured with your Firebase Project keys.
+   Ensure Supabase environment variables are configured in your `.env` file with your Supabase project URL and anon key.
 
 ---
 
